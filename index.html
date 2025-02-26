@@ -3,119 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe Widget</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Spin the Wheel</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #0f0f0f;
-            color: white;
-        }
-        .game-container {
-            margin-top: 20px;
-        }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            margin: 20px auto;
-            width: 320px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            background: #222;
-            border: 2px solid #555;
-            font-size: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #fff;
-        }
-        .cell:hover {
-            background: #444;
-        }
-        button {
-            background: #ff4747;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #ff7575;
-        }
+        body { text-align: center; font-family: Arial, sans-serif; background-color: #222; color: #fff; }
+        canvas { margin-top: 20px; }
+        button { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h2>Tic Tac Toe</h2>
-        <div class="board" id="board"></div>
-        <button onclick="resetGame()">Reset Game</button>
-        <p id="status"></p>
-    </div>
-    <script>
-        const board = document.getElementById("board");
-        let cells = [];
-        let currentPlayer = "X";
-        let gameState = ["", "", "", "", "", "", "", "", ""];
-        
-        function createBoard() {
-            board.innerHTML = "";
-            gameState.forEach((_, index) => {
-                let cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.setAttribute("data-index", index);
-                cell.addEventListener("click", handleMove);
-                board.appendChild(cell);
-                cells.push(cell);
-            });
-        }
-        
-        function handleMove(event) {
-            let index = event.target.getAttribute("data-index");
-            if (gameState[index] !== "") return;
-            
-            gameState[index] = currentPlayer;
-            event.target.innerText = currentPlayer;
-            
-            if (checkWin()) {
-                document.getElementById("status").innerText = `${currentPlayer} Wins!`;
-                setTimeout(() => resetGame(), 2000);
-                return;
-            }
-            
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
-            document.getElementById("status").innerText = `Player ${currentPlayer}'s turn`;
-        }
-        
-        function checkWin() {
-            const winPatterns = [
-                [0,1,2], [3,4,5], [6,7,8], // Rows
-                [0,3,6], [1,4,7], [2,5,8], // Columns
-                [0,4,8], [2,4,6]  // Diagonals
-            ];
-            
-            return winPatterns.some(pattern => 
-                gameState[pattern[0]] !== "" &&
-                gameState[pattern[0]] === gameState[pattern[1]] &&
-                gameState[pattern[1]] === gameState[pattern[2]]
-            );
-        }
-        
-        function resetGame() {
-            gameState = ["", "", "", "", "", "", "", "", ""];
-            currentPlayer = "X";
-            document.getElementById("status").innerText = "Game Reset!";
-            cells.forEach(cell => cell.innerText = "");
-        }
-        
-        createBoard();
-    </script>
+    <h1>Spin the Wheel!</h1>
+    <canvas id="wheelCanvas" width="400" height="400"></canvas>
+    <br>
+    <button onclick="spinWheel()">SPIN</button>
+    <h2 id="result"></h2>
+
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,54 +1,39 @@
-const board = document.getElementById("board");
-let cells = [];
-let currentPlayer = "X";
-let gameState = ["", "", "", "", "", "", "", "", ""];
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
 
-function createBoard() {
-    board.innerHTML = "";
-    gameState.forEach((_, index) => {
-        let cell = document.createElement("div");
-        cell.classList.add("cell");
-        cell.setAttribute("data-index", index);
-        cell.addEventListener("click", handleMove);
-        board.appendChild(cell);
-        cells.push(cell);
-    });
-}
+const segments = ["Win", "Try Again", "Bonus", "Jackpot", "Free Spin", "Lose"];
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#F1C40F", "#8E44AD", "#E74C3C"];
+let startAngle = 0;
+const arc = (2 * Math.PI) / segments.length;
 
-function handleMove(event) {
-    let index = event.target.getAttribute("data-index");
-    if (gameState[index] !== "") return;
-    
-    gameState[index] = currentPlayer;
-    event.target.innerText = currentPlayer;
+function drawWheel() {
+    for (let i = 0; i < segments.length; i++) {
+        const angle = startAngle + i * arc;
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        ctx.moveTo(200, 200);
+        ctx.arc(200, 200, 200, angle, angle + arc);
+        ctx.lineTo(200, 200);
+        ctx.fill();
 
-    if (checkWin()) {
-        setTimeout(() => alert(`${currentPlayer} Wins!`), 100);
-        resetGame();
-        return;
+        ctx.fillStyle = "#FFF";
+        ctx.font = "16px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(segments[i], 200 + Math.cos(angle + arc / 2) * 140, 200 + Math.sin(angle + arc / 2) * 140);
     }
-
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
 }
 
-function checkWin() {
-    const winPatterns = [
-        [0,1,2], [3,4,5], [6,7,8], // Rows
-        [0,3,6], [1,4,7], [2,5,8], // Columns
-        [0,4,8], [2,4,6]  // Diagonals
-    ];
-    
-    return winPatterns.some(pattern => 
-        gameState[pattern[0]] !== "" &&
-        gameState[pattern[0]] === gameState[pattern[1]] &&
-        gameState[pattern[1]] === gameState[pattern[2]]
-    );
+function spinWheel() {
+    let spinAngle = Math.random() * 360 + 1800; 
+    let finalAngle = (spinAngle % 360) / (360 / segments.length);
+    let resultIndex = Math.floor(segments.length - finalAngle) % segments.length;
+
+    startAngle += spinAngle * (Math.PI / 180);
+    drawWheel();
+
+    setTimeout(() => {
+        document.getElementById("result").innerText = "Result: " + segments[resultIndex];
+    }, 2000);
 }
 
-function resetGame() {
-    gameState = ["", "", "", "", "", "", "", "", ""];
-    currentPlayer = "X";
-    cells.forEach(cell => cell.innerText = "");
-}
-
-createBoard();
+drawWheel();
